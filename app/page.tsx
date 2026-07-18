@@ -145,9 +145,6 @@ export default function PremiumDashboard() {
       {/* Header */}
       <header className="relative z-10 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center max-w-7xl mx-auto gap-4">
         <div>
-          <span className={`text-xs font-semibold tracking-[0.25em] uppercase ${isDark ? 'text-purple-400/80' : 'text-purple-600'}`}>
-            Division Live Operations • Smart Geo-Clustering
-          </span>
           <h1 className={`text-4xl font-bold tracking-tight bg-gradient-to-r bg-clip-text text-transparent mt-1 ${isDark ? 'from-white via-slate-200 to-slate-400' : 'from-purple-950 via-purple-800 to-purple-600'}`}>
             Cyberabad Clean Bites
           </h1>
@@ -162,7 +159,7 @@ export default function PremiumDashboard() {
                 : 'bg-white border border-purple-200 text-purple-700 hover:bg-purple-50 shadow-sm shadow-purple-200/50'
             }`}
           >
-            {isDark ? '✨ Lavender Mode' : '🌙 Panther Mode'}
+            {isDark ? '✨ Light Mode' : '🌙 Dark Mode'}
           </button>
 
           <div className={`px-4 py-2 rounded-full text-sm font-medium backdrop-blur-md border ${isDark ? 'bg-white/5 border-white/10 text-slate-300' : 'bg-white border-purple-100 text-purple-900 shadow-sm'}`}>
@@ -331,11 +328,15 @@ export default function PremiumDashboard() {
               {selectedHub === 'all' ? 'Total Cyberabad Records' : `Spots in ${activeHubMeta?.name || 'Selected Hub'}`}
             </p>
           </div>
-          <div className={`mt-auto border-t pt-4 ${isDark ? 'border-white/5' : 'border-purple-100'}`}>
-            <p className={`text-xs leading-relaxed ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
-              Auto-snapping algorithm active. Incoming Twitter data is automatically clustered into 3km-5km regional hubs.
-            </p>
-          </div>
+          
+          {/* ONLY displays when a specific regional cluster is selected! */}
+          {selectedHub !== 'all' && (
+            <div className={`mt-auto border-t pt-4 ${isDark ? 'border-white/5' : 'border-purple-100'}`}>
+              <p className={`text-xs leading-relaxed ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                Auto-snapping algorithm active. Incoming Twitter data is automatically clustered into 3km-5km regional hubs.
+              </p>
+            </div>
+          )}
         </div>
       </main>
 
