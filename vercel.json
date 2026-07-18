@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/ingest?secret=cyberabad_clean_bites_secret_key_123",
+      "schedule": "0 23 * * *"
+    }
+  ]
+}
