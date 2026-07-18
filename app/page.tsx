@@ -80,6 +80,7 @@ export default function PremiumDashboard() {
   const [inspections, setInspections] = useState<Inspection[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [theme, setTheme] = useState<'dark' | 'lavender'>('dark');
+  const [showBanner, setShowBanner] = useState<boolean>(true); // Controls the top instruction banner
   
   // Search and Geographical Hub Filtering
   const [searchQuery, setSearchQuery] = useState('');
@@ -143,7 +144,7 @@ export default function PremiumDashboard() {
       <div className={`absolute bottom-[-10%] right-[10%] w-[500px] h-[500px] rounded-full blur-[140px] pointer-events-none transition-colors duration-700 ${isDark ? 'bg-[#8B5CF6]/5' : 'bg-purple-200/40'}`} />
 
       {/* Header */}
-      <header className="relative z-10 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center max-w-7xl mx-auto gap-4">
+      <header className="relative z-10 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center max-w-7xl mx-auto gap-4">
         <div>
           <h1 className={`text-4xl font-bold tracking-tight bg-gradient-to-r bg-clip-text text-transparent mt-1 ${isDark ? 'from-white via-slate-200 to-slate-400' : 'from-purple-950 via-purple-800 to-purple-600'}`}>
             Cyberabad Clean Bites
@@ -167,6 +168,38 @@ export default function PremiumDashboard() {
           </div>
         </div>
       </header>
+
+      {/* Interactive Top Instruction Banner (Dismissible) */}
+      <AnimatePresence>
+        {showBanner && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+            className={`relative z-10 max-w-7xl mx-auto mb-8 p-4 rounded-2xl border flex items-center justify-between gap-4 backdrop-blur-md transition-all duration-300 ${
+              isDark 
+                ? 'bg-gradient-to-r from-purple-900/30 via-purple-600/10 to-transparent border-purple-500/30 text-purple-200 shadow-[0_0_20px_rgba(147,51,234,0.1)]' 
+                : 'bg-gradient-to-r from-purple-100 via-purple-50 to-transparent border-purple-200 text-purple-950 shadow-sm'
+            }`}
+          >
+            <div className="flex items-center gap-3.5">
+              <span className="text-xl">💡</span>
+              <p className="text-xs md:text-sm leading-relaxed">
+                <strong className="font-bold">Interactive Dashboard:</strong> Click on any restaurant card below to open its full municipal audit file and inspect specific hygiene violations.
+              </p>
+            </div>
+            <button 
+              onClick={() => setShowBanner(false)}
+              aria-label="Dismiss banner"
+              className={`p-1.5 rounded-full transition-colors flex-shrink-0 ${
+                isDark ? 'hover:bg-white/10 text-purple-300' : 'hover:bg-purple-200/60 text-purple-700'
+              }`}
+            >
+              ✕
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Control Center (Search & Geographical Cluster Hubs) */}
       <section className="relative z-10 max-w-7xl mx-auto mb-10 space-y-5">
@@ -273,32 +306,45 @@ export default function PremiumDashboard() {
                   exit={{ opacity: 0, scale: 0.9 }}
                   whileHover={{ y: -5, scale: 1.01 }}
                   transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                  className={`relative cursor-pointer overflow-hidden rounded-2xl border p-6 backdrop-blur-xl group transition-colors duration-500 ${
+                  className={`relative cursor-pointer overflow-hidden rounded-2xl border p-6 backdrop-blur-xl group transition-colors duration-500 flex flex-col justify-between ${
                     isDark 
                       ? 'border-white/5 bg-gradient-to-b from-white/[0.04] to-transparent' 
                       : 'border-purple-100 bg-white/70 shadow-[0_8px_30px_rgb(147,51,234,0.06)] hover:shadow-[0_8px_30px_rgb(147,51,234,0.12)]'
                   }`}
                   style={isDark ? { boxShadow: `inset 0 0 12px rgba(255,255,255,0.01)` } : {}}
                 >
-                  <div className={`absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ${isDark ? 'from-purple-500/0 via-purple-500/10 to-purple-500/0' : 'from-purple-300/0 via-purple-300/20 to-purple-300/0'}`} />
-                  
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className={`text-lg font-semibold tracking-tight transition-colors line-clamp-1 ${isDark ? 'text-white group-hover:text-purple-300' : 'text-slate-900 group-hover:text-purple-700'}`}>
-                        {restaurantName}
-                      </h3>
-                      <p className={`text-sm mt-0.5 truncate max-w-[180px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                        📍 {restaurantLocation}
-                      </p>
-                    </div>
-                    <div className={`text-2xl font-extrabold bg-gradient-to-r ${themeConfig.color} bg-clip-text text-transparent`}>
-                      {item.rating_percentage !== null ? `${item.rating_percentage}%` : '--'}
+                  <div>
+                    <div className={`absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ${isDark ? 'from-purple-500/0 via-purple-500/10 to-purple-500/0' : 'from-purple-300/0 via-purple-300/20 to-purple-300/0'}`} />
+                    
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <h3 className={`text-lg font-semibold tracking-tight transition-colors line-clamp-1 ${isDark ? 'text-white group-hover:text-purple-300' : 'text-slate-900 group-hover:text-purple-700'}`}>
+                          {restaurantName}
+                        </h3>
+                        <p className={`text-sm mt-0.5 truncate max-w-[180px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                          📍 {restaurantLocation}
+                        </p>
+                      </div>
+                      <div className={`text-2xl font-extrabold bg-gradient-to-r ${themeConfig.color} bg-clip-text text-transparent`}>
+                        {item.rating_percentage !== null ? `${item.rating_percentage}%` : '--'}
+                      </div>
                     </div>
                   </div>
 
-                  <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border mt-2 ${isDark ? 'bg-white/[0.03] border-white/10' : 'bg-slate-50 border-purple-100'}`}>
-                    <span className={`w-2 h-2 rounded-full bg-gradient-to-r ${themeConfig.color}`} style={{ boxShadow: `0 0 10px ${themeConfig.glow}` }} />
-                    <span className={isDark ? 'text-slate-300' : 'text-slate-600'}>{item.status}</span>
+                  {/* Clickable Card Affordance Footer */}
+                  <div className="flex justify-between items-center mt-4 pt-3 border-t border-dashed border-white/10">
+                    <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${isDark ? 'bg-white/[0.03] border-white/10' : 'bg-slate-50 border-purple-100'}`}>
+                      <span className={`w-2 h-2 rounded-full bg-gradient-to-r ${themeConfig.color}`} style={{ boxShadow: `0 0 10px ${themeConfig.glow}` }} />
+                      <span className={isDark ? 'text-slate-300' : 'text-slate-600'}>{item.status}</span>
+                    </div>
+                    
+                    <span className={`text-[11px] font-semibold tracking-wide flex items-center gap-1 transition-all duration-300 ${
+                      isDark 
+                        ? 'text-slate-500 group-hover:text-purple-400 group-hover:translate-x-1' 
+                        : 'text-slate-400 group-hover:text-purple-600 group-hover:translate-x-1'
+                    }`}>
+                      View Audit <span>→</span>
+                    </span>
                   </div>
                 </motion.div>
               );
