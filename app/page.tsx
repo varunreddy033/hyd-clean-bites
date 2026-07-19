@@ -80,7 +80,7 @@ export default function PremiumDashboard() {
   const [inspections, setInspections] = useState<Inspection[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [theme, setTheme] = useState<'dark' | 'lavender'>('dark');
-  const [showBanner, setShowBanner] = useState<boolean>(true); // Controls the top instruction banner
+  const [showBanner, setShowBanner] = useState<boolean>(true);
   
   // Search and Geographical Hub Filtering
   const [searchQuery, setSearchQuery] = useState('');
@@ -133,7 +133,10 @@ export default function PremiumDashboard() {
     });
   }, [inspections, searchQuery, selectedHub]);
 
-  const activeInspection = inspections.find(item => item.id === selectedId);
+  const activeInspection = useMemo(() => {
+    return inspections.find(item => item.id === selectedId);
+  }, [inspections, selectedId]);
+
   const activeHubMeta = MAJOR_HUBS.find(h => h.id === selectedHub);
 
   return (
@@ -176,6 +179,7 @@ export default function PremiumDashboard() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+            transition={{ duration: 0.2 }}
             className={`relative z-10 max-w-7xl mx-auto mb-8 p-4 rounded-2xl border flex items-center justify-between gap-4 backdrop-blur-md transition-all duration-300 ${
               isDark 
                 ? 'bg-gradient-to-r from-purple-900/30 via-purple-600/10 to-transparent border-purple-500/30 text-purple-200 shadow-[0_0_20px_rgba(147,51,234,0.1)]' 
@@ -245,7 +249,7 @@ export default function PremiumDashboard() {
 
             {MAJOR_HUBS.map((hub) => {
               const count = hubCounts[hub.id] || 0;
-              if (count === 0 && selectedHub !== hub.id) return null; // Hide empty hubs cleanly
+              if (count === 0 && selectedHub !== hub.id) return null;
 
               return (
                 <button
@@ -297,24 +301,24 @@ export default function PremiumDashboard() {
 
               return (
                 <motion.div
-                  layout
+                  layout="position"
                   layoutId={`card-${item.id}`}
                   onClick={() => setSelectedId(item.id)}
                   key={item.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  whileHover={{ y: -5, scale: 1.01 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                  className={`relative cursor-pointer overflow-hidden rounded-2xl border p-6 backdrop-blur-xl group transition-colors duration-500 flex flex-col justify-between ${
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  whileHover={{ y: -4 }}
+                  transition={{ type: "spring", stiffness: 250, damping: 25 }}
+                  className={`relative cursor-pointer overflow-hidden rounded-2xl border p-6 backdrop-blur-xl group transition-colors duration-300 flex flex-col justify-between transform-gpu will-change-transform ${
                     isDark 
-                      ? 'border-white/5 bg-gradient-to-b from-white/[0.04] to-transparent' 
-                      : 'border-purple-100 bg-white/70 shadow-[0_8px_30px_rgb(147,51,234,0.06)] hover:shadow-[0_8px_30px_rgb(147,51,234,0.12)]'
+                      ? 'border-white/5 bg-gradient-to-b from-white/[0.04] to-transparent hover:border-purple-500/30' 
+                      : 'border-purple-100 bg-white/70 shadow-[0_8px_30px_rgb(147,51,234,0.06)] hover:shadow-[0_8px_30px_rgb(147,51,234,0.12)] hover:border-purple-300'
                   }`}
                   style={isDark ? { boxShadow: `inset 0 0 12px rgba(255,255,255,0.01)` } : {}}
                 >
                   <div>
-                    <div className={`absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ${isDark ? 'from-purple-500/0 via-purple-500/10 to-purple-500/0' : 'from-purple-300/0 via-purple-300/20 to-purple-300/0'}`} />
+                    <div className={`absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none ${isDark ? 'from-purple-500/0 via-purple-500/10 to-purple-500/0' : 'from-purple-300/0 via-purple-300/20 to-purple-300/0'}`} />
                     
                     <div className="flex justify-between items-start mb-4">
                       <div>
@@ -386,22 +390,29 @@ export default function PremiumDashboard() {
         </div>
       </main>
 
-      {/* Smooth Ambient Modal Detail Overlay */}
+      {/* 🚀 BUTTERY SMOOTH 60FPS MODAL OVERLAY */}
       <AnimatePresence>
         {selectedId && activeInspection && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            onClick={() => setSelectedId(null)}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md cursor-pointer"
+          >
             <motion.div
               layoutId={`card-${selectedId}`}
-              className={`relative w-full max-w-lg overflow-hidden rounded-3xl border p-8 shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar ${
+              onClick={(e) => e.stopPropagation()}
+              transition={{ type: "spring", stiffness: 220, damping: 25 }}
+              className={`relative w-full max-w-lg overflow-hidden rounded-3xl border p-8 shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar cursor-default transform-gpu will-change-transform ${
                 isDark ? 'bg-[#0E0B18] border-white/10 text-white' : 'bg-[#FAFAFF] border-purple-200 text-slate-900 shadow-purple-900/20'
               }`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
             >
+              {/* Optimized lightweight glow (no heavy CPU blur transitions!) */}
               <div 
-                className="absolute -top-24 -left-24 w-60 h-60 rounded-full blur-[100px] pointer-events-none transition-all" 
-                style={{ backgroundColor: getTheme(activeInspection.status, isDark).glow.replace('0.', '0.4') }} 
+                className="absolute -top-24 -left-24 w-60 h-60 rounded-full blur-3xl pointer-events-none opacity-40 transform-gpu" 
+                style={{ backgroundColor: getTheme(activeInspection.status, isDark).glow }} 
               />
 
               <div className="flex justify-between items-start mb-6 relative z-10">
@@ -420,7 +431,12 @@ export default function PremiumDashboard() {
                 </button>
               </div>
 
-              <div className="space-y-6 relative z-10">
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05, duration: 0.2 }}
+                className="space-y-6 relative z-10"
+              >
                 <div className={`flex items-center gap-6 border p-4 rounded-xl ${isDark ? 'bg-white/[0.02] border-white/5' : 'bg-white border-purple-100 shadow-sm'}`}>
                   <div>
                     <p className={`text-xs uppercase font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Compliance Index</p>
@@ -450,9 +466,9 @@ export default function PremiumDashboard() {
                     <p className={`text-sm italic ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>No specific violations recorded.</p>
                   )}
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
-          </div>
+          </motion.div>
         )}
       </AnimatePresence>
       
